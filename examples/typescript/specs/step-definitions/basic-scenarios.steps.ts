@@ -8,6 +8,10 @@ defineFeature(feature, (test) => {
     test('Launching a SpaceX rocket', ({ given, when, then }) => {
         let rocket: Rocket;
 
+        given('Earth is round', () => {
+            console.log('yay');
+        });
+
         given('I am Elon Musk attempting to launch a rocket into space', () => {
             rocket = new Rocket();
         });

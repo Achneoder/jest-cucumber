@@ -164,10 +164,18 @@ const parseScenarioOutline = (astScenarioOutline: any) => {
 };
 
 const parseScenarios = (astFeature: any) => {
-    return astFeature.children
+    const background = parseBackground(astFeature);
+    return background.concat(astFeature.children
         .filter((child: any) => child.type === 'Scenario')
+        .map((astScenario: any) => parseScenario(astScenario)));
+};
+
+const parseBackground = (astFeature: any) => {
+    return astFeature.children
+        .filter((child: any) => child.type === 'Background')
         .map((astScenario: any) => parseScenario(astScenario));
 };
+
 
 const parseScenarioOutlines = (astFeature: any) => {
     return astFeature.children
@@ -189,6 +197,7 @@ export const parseFeature = (featureText: string, options?: Options): ParsedFeat
     return {
         title: astFeature.name,
         scenarios: parseScenarios(astFeature),
+        background: parseBackground(astFeature),
         scenarioOutlines: parseScenarioOutlines(astFeature),
         tags: parseTags(astFeature),
         options,

@@ -1,5 +1,9 @@
 Feature: Rocket Launching
 
+Background:
+  Given Earth is round
+
+
 Scenario: Launching a SpaceX rocket
   Given I am Elon Musk attempting to launch a rocket into space
   When I launch the rocket

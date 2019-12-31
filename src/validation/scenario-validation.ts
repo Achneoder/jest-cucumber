@@ -98,12 +98,14 @@ export const checkThatFeatureFileAndStepDefinitionsHaveSameScenarios = (
 
     if (parsedScenarios && parsedScenarios.length) {
         parsedScenarios.forEach((parsedScenario) => {
+            if( parsedScenario.title.length > 0 ){
             findScenarioFromStepDefinitions(
                 errors,
                 featureFromStepDefinitions && featureFromStepDefinitions.scenarios,
                 parsedScenario,
                 parsedFeature.options.errors as ErrorOptions,
             );
+            }
         });
     }
 

@@ -7,6 +7,10 @@ const feature = loadFeature('./specs/features/basic-scenarios.feature');
 defineFeature(feature, test => {
     test('Launching a SpaceX rocket', ({ given, when, then }) => {
         let rocket;
+
+        given('Earth is round', () => {
+            console.log('yay');
+        });
     
         given('I am Elon Musk attempting to launch a rocket into space', () => {
             rocket = new Rocket();

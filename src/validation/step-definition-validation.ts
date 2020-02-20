@@ -13,6 +13,7 @@ export const matchSteps = (stepFromFeatureFile: string, stepMatcher: string | Re
 export const ensureFeatureFileAndStepDefinitionScenarioHaveSameSteps = (
     options: Options,
     parsedScenario: ParsedScenario | ParsedScenarioOutline,
+    background: ParsedScenario,
     scenarioFromStepDefinitions: ScenarioFromStepDefinitions,
 ) => {
     if (options && options.errors === false) {
@@ -40,9 +41,14 @@ export const ensureFeatureFileAndStepDefinitionScenarioHaveSameSteps = (
     }
 
     const parsedStepCount = parsedScenarioSteps.length;
+    let parsedBackgroundStepCount =  0;
+    if (background) {
+        parsedBackgroundStepCount = background.steps.length;
+        parsedScenarioSteps = background.steps.concat(parsedScenarioSteps);
+    }
     const stepDefinitionCount = scenarioFromStepDefinitions.steps.length;
 
-    if (parsedStepCount !== stepDefinitionCount && options.errors) {
+    if (parsedStepCount + parsedBackgroundStepCount !== stepDefinitionCount && options.errors) {
         // tslint:disable-next-line:max-line-length
         errors.push(`Scenario "${parsedScenario.title}" has ${parsedStepCount} step(s) in the feature file, but ${stepDefinitionCount} step definition(s) defined.`);
     }

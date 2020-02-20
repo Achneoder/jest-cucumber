@@ -5,6 +5,7 @@ import {
     StepFromStepDefinitions,
     ParsedFeature, ParsedScenario,
     Options, ParsedScenarioOutline,
+    ParsedStep,
 } from './models';
 import {
     ensureFeatureFileAndStepDefinitionScenarioHaveSameSteps,
@@ -108,6 +109,7 @@ const defineScenario = (
     scenarioTitle: string,
     scenarioFromStepDefinitions: ScenarioFromStepDefinitions,
     parsedScenario: ParsedScenario,
+    background: ParsedScenario,
     only: boolean = false,
     skip: boolean = false,
     concurrent: boolean = false,
@@ -116,9 +118,13 @@ const defineScenario = (
 
     testFunction(scenarioTitle, () => {
         return scenarioFromStepDefinitions.steps.reduce((promiseChain, nextStep, index) => {
-            const stepArgument = parsedScenario.steps[index].stepArgument;
+            let steps: ParsedStep[] = parsedScenario.steps;
+            if (background){
+                steps = background.steps.concat(parsedScenario.steps);
+            }
+            const stepArgument = steps[index].stepArgument;
             const matches = matchSteps(
-                parsedScenario.steps[index].stepText,
+                steps[index].stepText,
                 scenarioFromStepDefinitions.steps[index].stepMatcher,
             );
             let matchArgs: string[] = [];
@@ -170,6 +176,8 @@ const createDefineScenarioFunction = (
         const parsedScenarioOutline = parsedFeature.scenarioOutlines
             .filter((s) => s.title.toLowerCase() === scenarioTitle.toLowerCase())[0];
 
+        const background = parsedFeature.background;
+
         const options = parsedFeature.options;
 
         scenarioTitle = processScenarioTitleTemplate(
@@ -183,6 +191,7 @@ const createDefineScenarioFunction = (
         ensureFeatureFileAndStepDefinitionScenarioHaveSameSteps(
             options,
             parsedScenario || parsedScenarioOutline,
+            background[0],
             scenarioFromStepDefinitions,
         );
 
@@ -195,6 +204,7 @@ const createDefineScenarioFunction = (
                 scenarioTitle,
                 scenarioFromStepDefinitions,
                 parsedScenario,
+                background[0],
                 only,
                 skip,
                 concurrent,
@@ -205,6 +215,7 @@ const createDefineScenarioFunction = (
                     (scenario.title || scenarioTitle),
                     scenarioFromStepDefinitions,
                     scenario,
+                    background[0],
                     only,
                     skip,
                     concurrent,
